@@ -1,0 +1,7 @@
+# Run scripts/00a_setup_local.cmd to create private secrets in .env.
+# Never commit .env or .local.
+AUTH_DB_PASSWORD=
+CAR_DB_PASSWORD=
+RENTAL_DB_PASSWORD=
+BOOKING_DEPOSIT_PERCENT=40
+BOOKING_HOLD_MINUTES=1440

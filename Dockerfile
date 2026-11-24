@@ -8,6 +8,6 @@ RUN mvn -B -ntp -Dmaven.test.skip=true package
 FROM eclipse-temurin:21-jre-jammy
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY --from=build /build/target/eureka-server-0.0.1-SNAPSHOT.jar ./app.jar
+COPY --from=build /build/target/rental-service-0.0.1-SNAPSHOT.jar ./app.jar
 USER 1000:1000
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

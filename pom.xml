@@ -10,7 +10,7 @@
     <relativePath/>
   </parent>
   <groupId>com.example</groupId>
-  <artifactId>auth-service</artifactId>
+  <artifactId>carmanage-service</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <properties>
     <java.version>21</java.version>

@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "database": "PostgreSQL 17.7, 3 databases with separate owners",
+  "discovery": "Eureka with two Car instances",
+  "method": "Real JVM/HTTP/JDBC plus jsdom; no Docker or visual rendering claim",
+  "checks": [
+    "Known retired source is archived reversibly during an in-place upgrade",
+    "Rerunning setup preserves all existing database secrets and signing keys",
+    "Three business services and two Car instances register with a real Eureka server",
+    "Registration supports real owner/customer accounts, masks contacts and prevents ADMIN self-registration",
+    "Fresh installation has no manufactured accounts or car inventory",
+    "Real uploaded photos, draft/submission/admin review and public listing work; precise address stays private",
+    "Owner boundaries are enforced and uploaded media is shared with a second Car instance",
+    "Date-based quote uses live Car provider and exact server prices",
+    "Booking submission is idempotent",
+    "Customer and owner cannot read or operate another participant’s booking",
+    "Concurrent owner approvals cannot reserve overlapping dates twice",
+    "Bank details are masked in settings and disclosed only to approved booking participants",
+    "Customer transfer claims never automatically confirm money received",
+    "Owner verifies the actual deposit once; handover address appears after confirmation",
+    "Handover, balance collection, return and completion enforce the booking state machine",
+    "Paid cancellations preserve a refund obligation",
+    "Refund records require owner confirmation after the actual refund",
+    "Expired holds release calendar availability",
+    "OpenFeign and LoadBalancer route calls to both Eureka-discovered Car instances",
+    "Customer/owner/admin DOM flows work against the live HTTP services",
+    "Scheduled expiry persists EXPIRED and the refund obligation without an authenticated user",
+    "Stopping both Car providers returns a clear 503; Rental remains available with its own database",
+    "Bookings, car identity, photos and account passwords survive a database and service restart",
+    "Uploaded photo bytes survive restart"
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-20",
+  "feature": "Manufacturer model reference catalog and owned demo fleet import",
+  "models": 20,
+  "brands": [
+    "VinFast",
+    "Toyota",
+    "Hyundai",
+    "Kia",
+    "Mazda"
+  ],
+  "snapshot": true,
+  "automaticLiveCrawler": false,
+  "pricing": "Illustrative demo rates; manufacturer websites are not rental inventory",
+  "build": {
+    "rootMavenVerify": "PASS for all four services before final Rental metadata test; final Rental suite separately PASS",
+    "java": "21.0.6",
+    "maven": "3.9.16"
+  },
+  "tests": [
+    {
+      "module": "auth-service",
+      "name": "com.example.auth_service.AuthLoginTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarAuthorizationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarmanageServiceApplicationTests",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarCatalogTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "rental-service",
+      "name": "com.example.rental_service.RentalIntegrationTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "totalTests": 24,
+  "ui": {
+    "status": "passed",
+    "method": "jsdom DOM actions with live CarManage HTTP API and H2; Auth login stubbed with valid signed test JWT; no browser layout claim",
+    "checks": [
+      "Danh mục hiển thị 20 mẫu, 5 hãng và 20 liên kết nguồn",
+      "Lọc theo hãng và tìm tên mẫu",
+      "Chọn mẫu không điền biển số/giá demo; thêm xe thật lưu đúng metadata qua API",
+      "Thêm bộ demo từ giao diện: 20 xe có nhãn DEMO, giữ xe thật đã nhập",
+      "Nhập lặp trên giao diện bỏ qua 20 xe demo",
+      "Chế độ demo trong bộ nhớ không gọi nhập vào cơ sở dữ liệu"
+    ],
+    "errors": []
+  },
+  "limitations": [
+    "HTTP persistence tests use H2 in PostgreSQL compatibility mode, not PostgreSQL 17.",
+    "Docker deployment was not executed in this environment for this change.",
+    "UI event flows use jsdom with the real CarManage HTTP API and a stubbed login; no visual browser layout verification."
+  ],
+  "migration": "Only four nullable columns added to cars by existing Hibernate ddl-auto:update; existing rows remain",
+  "files": [
+    "car-catalog.tsv",
+    "DANH_MUC_XE.md",
+    "CarCatalogTest.java",
+    "RentalIntegrationTest.java",
+    "static/js/catalog.js"
+  ]
+}

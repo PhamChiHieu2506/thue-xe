@@ -1,0 +1,19 @@
+{
+  "DANG_XE_TRUC_TIEP.txt": "f42e2b0e5a6757847d938c1c1b2fd067a0c64693cc85c42e22aa20de0d0fc096",
+  "HUONG_DAN_CHAY.txt": "5f7d061230cd58505073e711c918f6427b36453bf12fbe294ad8febe00a8c6b9",
+  "KIEM_THU.md": "c69171587156b7f6df9bb4a4d5be6e1648025f0350ee4bd907429a1e013002e8",
+  "README.md": "69d3ee000d2ba31812d51f89a3174ac8d606bddf8cc073f82b7c94682ea67542",
+  "THIET_KE_SOA.md": "bba2697099b714f6e91dd62b454088f40b7043f3b7b758d831a4a6366fe3ba5c",
+  "api/openapi.json": "5534d43c4cc6929d831a02cb67a27dbb912b28dca078d5ce7e22cb0eb8d7096a",
+  "carmanage-service/src/main/java/com/example/carmanage_service/controller/CarController.java": "ad74446dfbe146a9029af5de5d4744de5fb4e75147904ebc9f7293a5ba67bb5c",
+  "carmanage-service/src/main/java/com/example/carmanage_service/repository/CarRepository.java": "7115f34a551fe580fff5b5457775670765dfa2871915948e4736cac59c386fc7",
+  "carmanage-service/src/main/java/com/example/carmanage_service/security/ApiSecurity.java": "a1c3895285cb1f860dbac5e448e2c62252d26934970cbbd2ea7c574f3c4730c1",
+  "carmanage-service/src/main/java/com/example/carmanage_service/service/CarService.java": "ca726e0e758b785e37d4fe62e76c278e70546bb8500b3f6f3c1c3a01137b62c5",
+  "carmanage-service/src/main/java/com/example/carmanage_service/service/DirectPublicationMigration.java": "604cf7fd5463dda97588095aed6e6286aa5ced7a36b9ca2300511cd9963d60d1",
+  "carmanage-service/src/main/java/com/example/carmanage_service/service/PublicationRules.java": "22fee7af7d476525435c9e12ee6f2316307c9b0d3937da1a0957f7ffd48847d8",
+  "carmanage-service/src/main/resources/static/js/app.js": "4309b07bd06956e918d13d15921057d9cb828742d86667f0e96d181570959a8f",
+  "carmanage-service/src/test/java/com/example/carmanage_service/CarAuthorizationTest.java": "98a3dee9d55bfa4eb5cb488ba912beaadcd7e85e974747813df4648a64d02309",
+  "carmanage-service/src/test/java/com/example/carmanage_service/CarPublishingTest.java": "359a6c35932df58ed18b938144e67c879e61c029f8a05564bb9158b6097fe63d",
+  "carmanage-service/src/test/java/com/example/carmanage_service/CarmanageServiceApplicationTests.java": "844ae3801df13578f34f4b69550107a1b6475703c0c94e418e97c06328bafcd7",
+  "postman/PTPMHDV_Registry.postman_collection.json": "95352c5991b0c694e92de0d8de18fb22f828dde808428458aed7b99a23818753"
+}

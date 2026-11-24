@@ -1,0 +1,92 @@
+{
+  "date": "2026-11-23",
+  "changes": [
+    "Role-aware customer/owner/admin live workspaces, functional customer quote via Rental",
+    "Owner list selected by authenticated JWT subject using mine=true",
+    "Optional persisted self-profile in Auth with server-side masked responses",
+    "Numeric local demo credentials with explicit existing-account migration, IDs/keys/DB passwords preserved",
+    "Masked demo tables/details/CSV; clear prior data on logout/account switch"
+  ],
+  "tests": [
+    {
+      "module": "auth-service",
+      "name": "com.example.auth_service.ProfilePrivacyTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "auth-service",
+      "name": "com.example.auth_service.AuthLoginTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarAuthorizationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarmanageServiceApplicationTests",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarCatalogTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "rental-service",
+      "name": "com.example.rental_service.RentalIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "totalJavaTests": 34,
+  "mavenVerify": "PASS all four services",
+  "frontendSyntax": "PASS all JavaScript files",
+  "uiIntegration": {
+    "status": "passed",
+    "method": "jsdom DOM interactions with real Auth, CarManage and Rental HTTP services; H2 test databases, simple discovery; no visual browser/layout verification",
+    "checks": [
+      "OWNER1 có không gian chủ xe, thêm và xem xe của mình",
+      "OWNER2/OWNER1 tách danh sách theo JWT, không lẫn dữ liệu quản lý",
+      "CUSTOMER thấy xe của các chủ xe, không có nút ghi/xóa/nhập demo",
+      "CUSTOMER báo giá 3 ngày: 2.250.000 VND qua Rental thật và CarManage thật",
+      "Hồ sơ lưu tại Auth, chỉ trả dữ liệu che; ô nhập được xóa sau khi lưu",
+      "CUSTOMER không mở được trang quản trị bằng sửa hash",
+      "Bảng, chi tiết và CSV minh họa đều che điện thoại, email, họ tên và GPLX",
+      "Đổi tài khoản xóa trạng thái cũ; customer không dùng màn hình quản trị minh họa"
+    ],
+    "errors": []
+  },
+  "setupMigration": {
+    "status": "PASS",
+    "preservesExistingKeys": true,
+    "preservesDatabaseSecrets": true,
+    "preservesCustomProperties": true,
+    "doesNotResetDatabases": true
+  },
+  "limitations": [
+    "Automated database tests use H2 in PostgreSQL compatibility mode, not a PostgreSQL deployment.",
+    "UI checks are jsdom DOM interactions with three real local HTTP services and Simple Discovery, not a visual layout/browser test.",
+    "Docker, PostgreSQL 17 and Eureka deployment for this update must be built and checked on the user machine.",
+    "Quote calculations do not create booking orders or reserve a vehicle."
+  ],
+  "migration": "Adds nullable display_name, phone, email in Auth accounts; demo password sync retains IDs, roles, enabled flags and stored profile values."
+}

@@ -1,0 +1,48 @@
+SỬA LỖI MAVEN TRONG ECLIPSE
+
+Triệu chứng:
+Cannot access Key[type=org.apache.maven.project.MavenProject,
+annotation=[none]] outside of a scoping block
+
+Đây là lỗi đã được ghi nhận giữa m2e của Eclipse và maven-jar-plugin.
+Bộ mã mới ghim plugin JAR về 3.4.2 trong cả bốn module.
+
+CÁCH SỬA TRÊN BỘ MÃ BẠN ĐÃ IMPORT
+1. Mở pom.xml của auth-service trong Eclipse.
+2. Tìm khối <properties>. Ngay dưới dòng <java.version>21</java.version>, thêm:
+
+    <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+
+   Ví dụ:
+    <properties>
+        <java.version>21</java.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <spring-cloud.version>2025.1.4</spring-cloud.version>
+    </properties>
+
+3. Bấm Ctrl+S. Lặp lại bước 1-2 cho:
+   - carmanage-service/pom.xml
+   - rental-service/pom.xml
+   - eureka-server/pom.xml
+   Chỉ thêm đúng một dòng vào khối properties đang có, không tạo khối properties
+   thứ hai và không thay toàn bộ pom.xml bằng ví dụ ngắn trên.
+4. Trong Package Explorer hoặc Project Explorer, giữ Ctrl và chọn cả 4 dự án.
+5. Chuột phải -> Maven -> Update Project... (hoặc Alt+F5).
+6. Chọn đủ 4 dự án, tích Force Update of Snapshots/Releases -> OK.
+7. Đợi tác vụ cập nhật/build ở góc dưới Eclipse kết thúc.
+8. Nếu lỗi cũ còn: menu Project -> Clean... -> chọn 4 dự án -> Clean.
+
+BẠN CŨNG CÓ THỂ DÙNG FILE POM ĐÃ SỬA TRONG ZIP MỚI
+- Giải nén ZIP mới sang thư mục tạm.
+- Chép riêng pom.xml của mỗi module vào đúng thư mục module đang dùng.
+- Trong Eclipse chọn 4 dự án -> F5 -> Maven -> Update Project, như bước 5-8.
+- Giữ nguyên .local, .env và dữ liệu hiện có. Không cần xóa database.
+
+NẾU VẪN CÒN LỖI
+- Bấm đúp một dòng lỗi, chép toàn bộ phần Description để xác định lỗi tiếp theo.
+- Chưa cần xóa thư mục .m2 hay cài lại PostgreSQL.
+- Có thể cập nhật m2e/Eclipse để nhận bản sửa chính thức; không cần làm việc này
+  trước khi thử cách ghim phiên bản plugin nêu trên.
+
+Nguồn lỗi và cách xử lý:
+https://github.com/eclipse-m2e/m2e-core/issues/2084

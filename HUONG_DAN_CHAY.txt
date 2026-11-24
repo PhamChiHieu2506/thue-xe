@@ -1,0 +1,116 @@
+HUONG DAN CHAY VELODRIVE - WINDOWS / DOCKER
+
+A. NANG CAP TU BAN CU (GIU DU LIEU)
+1. Mo Docker Desktop, doi Engine running.
+2. Mo thu muc du an CU dang chay, noi co docker-compose.yml, .env va .local.
+3. Mo PowerShell tai day. Chay: docker compose --profile balance down
+   Lenh nay dung va xoa container de tao lai; KHONG them -v. Volume du lieu van giu.
+4. Sao luu du lieu va thu muc .local/.env; chep de source moi vao dung thu muc cu.
+   Khong xoa .env, .local, keys va cac volume trong Docker Desktop.
+5. Chay: .\scripts\00a_setup_local.cmd
+   Lenh chi bo sung cau hinh con thieu, trong do co mat khau DB Rental moi.
+   Khong doi key, mat khau DB Auth/Car hoac tai khoan nguoi dung da co.
+   File tao demo cu con sot khi chep de duoc chuyen vao .local\retired-source,
+   khong con duoc bien dich. Neu dung Eclipse, Project -> Clean sau cap nhat.
+6. Chay: docker compose up -d --build
+7. Chay: docker compose ps
+   Cho tat ca dich vu Up (healthy). Lan build dau co the mat vai phut.
+8. Mo http://localhost:8080/dashboard.html va nhan Ctrl+F5.
+9. Dang nhap bang tai khoan cu. Xe cu da gui cho duyet va du thong tin se duoc
+   dang tu dong. Xe thieu thong tin: Xe cua toi -> Chinh sua -> bo sung -> Luu
+   thay doi. Khong can admin duyet. Xe mau cu khong hien thi, khong tu sinh lai.
+
+B. CAI MOI
+1. Cai JDK 21; mo PowerShell chay java -version de kiem tra.
+2. Mo Docker Desktop den khi Engine running.
+3. Giai nen source. Vao thu muc co docker-compose.yml, giu Shift + chuot phai,
+   chon Open PowerShell/Terminal here, hoac bam thanh dia chi go powershell.
+4. Chay: .\scripts\00a_setup_local.cmd
+5. Chay: docker compose up -d --build
+6. Chay: docker compose ps
+7. Mo http://localhost:8080 . Eureka: http://localhost:8761 .
+8. Mo .local\TAI_KHOAN_QUAN_TRI.txt de xem ten va mat khau admin khoi tao.
+   Mat khau trong tep nay chi ap dung khi CSDL chua co ADMIN.
+9. Dang nhap admin, vao Ho so de doi mat khau cua ban.
+10. Owner va customer tu dang ky tren web; chon dung vai tro khi dang ky.
+
+C. DANG MOT XE CHO THUE - KHONG QUA DUYET
+1. Dang ky tai khoan Chu xe. Dang nhap -> Xe cua toi -> Dang xe moi.
+2. Chon dong xe de dien nhanh ten/hang/so cho va dung anh co san; hoac tu nhap.
+3. Nhap bien so, nam san xuat, so cho, gia/24 gio, hop so, nhien lieu,
+   tinh/thanh pho, phuong/xa, dia chi nhan va mo ta/yeu cau thue.
+4. Co the tai 1-6 anh JPEG/PNG cua xe (toi da 8 MB/anh); anh tai len duoc uu tien.
+   Xe tu nhap khong co anh trong danh muc thi can it nhat mot anh tai len.
+5. Chon San sang cho thue -> bam Them va dang xe. Xe hien ngay cho customer khi
+   tim dung dia diem va lich con trong. Khong co buoc Gui duyet hay Admin duyet.
+6. Chinh sua -> Luu thay doi: xe van duoc dang. Luu tru se an xe khoi tim kiem.
+7. Xe cu chua dang: bo sung thong tin roi Luu thay doi; hoac bam Dang xe neu da du.
+   Yeu cau thue van can chu xe xac nhan de giu lich; do la quy trinh chuyen xe.
+
+D. KHACH DAT XE
+1. Customer dang ky tai khoan Khach thue. Dang nhap.
+2. Chon dia diem, thoi gian nhan/tra trong tuong lai. Bam Tim xe phu hop.
+3. Xem xe -> Kiem tra lich & chi phi -> doc tong tien, so ngay, khoan giu cho.
+4. Dong y quy trinh va Gui yeu cau thue xe. Yeu cau o trang thai Cho chu xe duyet.
+5. Owner vao Yeu cau & chuyen xe -> Chi tiet -> Duyet yeu cau; nhap thong tin ban giao.
+6. Customer mo Chi tiet chuyen. Sau khi owner duyet, xem huong dan thanh toan.
+   Neu chuyen khoan: thuc hien chuyen tien that truoc, roi gui so tien va ma giao dich.
+   Neu tien mat: tra truc tiep cho owner; owner ghi nhan so tien da thuc nhan.
+7. Owner kiem tra ngan hang, chi xac nhan khi tien da ve. Gui ma giao dich KHONG tu
+   dong bien thanh da thanh toan. Du khoan giu cho -> Da xac nhan.
+8. Dia chi ban giao hien cho customer sau khi chuyen da xac nhan.
+9. Trong vong 2 gio truoc lich nhan, owner xac nhan da ban giao xe -> Dang thue.
+10. Thu phan tien con lai va ghi nhan giao dich. Khi nhan lai xe, owner xac nhan
+    tra xe & hoan tat. He thong chi hoan tat khi tien thue da du.
+
+E. CAU HINH NHAN TIEN / HUY / HOAN TIEN
+- Owner -> Nhan thanh toan -> Chon Tien mat hoac Chuyen khoan, nhap thong tin dung.
+- So tai khoan duoc che o trang cai dat; ben lien quan xem day du trong chuyen da duyet.
+- Tranh nhap ma giao dich gia: day la so ghi nhan/doi soat, khong ket noi ngan hang tu dong.
+- Truoc ban giao co the Huy chuyen va neu ly do. He thong luu so tien can hoan.
+- Owner thuc hien hoan tien o ngoai he thong, sau do ghi ma giao dich hoan that.
+- Yeu cau da duyet qua han thanh toan duoc giai phong lich; job chuyen trang thai moi phut.
+- Khoan giu cho mac dinh 40%, han toi da 24h va khong qua gio nhan xe. Thay doi trong
+  .env: BOOKING_DEPOSIT_PERCENT, BOOKING_HOLD_MINUTES; chay docker compose up -d de ap dung.
+
+F. KIEM TRA VAN HANH
+- Danh sach container: docker compose ps
+- Log Rental: docker compose logs --tail=100 rental-service
+- Trang thai Auth: http://localhost:8082/actuator/health/readiness
+- Trang thai Car: http://localhost:8080/actuator/health/readiness
+- Trang thai Rental: http://localhost:8081/actuator/health/readiness
+- Dung 1 dich vu: docker compose stop carmanage-service
+- Khoi dong lai: docker compose start carmanage-service
+- Xem can bang tai: docker compose --profile balance up -d --build
+  Replica Car o localhost:8090; Rental goi theo ten dich vu trong Eureka.
+- Dung he thong: docker compose --profile balance down (khong them -v).
+
+G. LOI THUONG GAP
+- Trang tim xe co 21 dong xe de lua chon. Chon dong xe, tinh/thanh va lich de tim
+  xe da duoc dang. Xe co gia va lich trong la xe owner da dang du thong tin.
+  Neu chua co xe cua dong do tai khu vuc da chon, thu doi dia diem hoac lich.
+- Mat khau admin trong tep moi khong dung sau nang cap: dung mat khau admin cu;
+  bootstrap khong dat lai tai khoan da co.
+- DB password authentication failed: kiem tra .env cu tuong ung volume, khong sinh
+  lai mat khau khi volume da co du lieu.
+- HTTP 409 trung lich: yeu cau khac vua duoc duyet, chon thoi gian/xe khac.
+- HTTP 503 khi bao gia: Car/Eureka chua san sang; xem health/log va doi dang ky.
+- HTTP 401: phien JWT het han (15 phut), dang nhap lai.
+- Tai anh loi: dung PNG/JPEG, 200x150 tro len, khong qua 8 MB va khong qua 40 MP.
+- Khong can chay cac Main trong Eclipse neu da chay Docker (tranh trung cong).
+
+H. UP GITHUB
+Up source, Dockerfile/Compose, pom, mvnw/.mvn, scripts/tools, docs, api, postman.
+Khong up .env, .local, mat khau, key, target, anh ca nhan trong media, backup DB.
+
+I. CAP NHAT GIAO DIEN / TINH THANH / ANH XE
+1. Nhan Ctrl+F5 sau khi build lai de tai giao dien moi.
+2. O Dia diem nhan xe, chon trong 34 tinh/thanh hien hanh; de Toan quoc neu tim moi noi.
+3. Customer co 21 dong xe kem anh, co the loc hang/so cho va bam Chon dong xe.
+4. Bam Tim xe dong nay de xem xe dang cho thue tai khu vuc va lich da chon.
+   Chi xe da dang moi co gia va nut xem chi tiet/bao gia; khong sinh chu xe/gia gia dinh.
+5. Owner mo Dang xe moi: co the chon dong xe de dien nhanh ten/hang/so cho va xem anh.
+   Nhap du dia diem, gia va cac truong bat buoc; bam Them va dang xe de hien ngay.
+6. Xe cu chua co anh da co anh theo dong xe tren the. Khong doi ID, bien so, chu so huu,
+   gia hoac tu gan anh upload vao ban ghi cu. Trang thai cho duyet cu du thong tin
+   duoc chuyen sang da dang; xe nhap/chua du thong tin giu rieng.

@@ -1,0 +1,177 @@
+name: ptpmhdv-kiemtra2
+
+x-app: &app
+  restart: unless-stopped
+  user: "${APP_UID:-1000}:${APP_GID:-1000}"
+
+x-health: &health
+  interval: 5s
+  timeout: 4s
+  retries: 20
+  start_period: 20s
+
+x-eureka-env: &eureka-env
+  EUREKA_URL: http://eureka-server:8761/eureka/
+  JWT_PUBLIC_KEY_LOCATION: file:/run/ptpmhdv/public-key.pem
+
+x-car-env: &car-env
+  APP_MEDIA_DIR: /app/media/uploads
+  <<: *eureka-env
+  APP_DB_URL: jdbc:postgresql://car-db:5432/carmanage_db
+  APP_DB_USER: car_app
+  APP_DB_PASSWORD: "${CAR_DB_PASSWORD:?Chay scripts/00a_setup_local.cmd truoc}"
+
+services:
+  auth-db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth_app
+      POSTGRES_PASSWORD: "${AUTH_DB_PASSWORD:?Chay scripts/00a_setup_local.cmd truoc}"
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    networks: [auth-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+
+  car-db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: carmanage_db
+      POSTGRES_USER: car_app
+      POSTGRES_PASSWORD: "${CAR_DB_PASSWORD:?Chay scripts/00a_setup_local.cmd truoc}"
+    volumes:
+      - car_data:/var/lib/postgresql/data
+    networks: [car-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+
+  rental-db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: rental_db
+      POSTGRES_USER: rental_app
+      POSTGRES_PASSWORD: "${RENTAL_DB_PASSWORD:?Chay scripts/00a_setup_local.cmd truoc}"
+    volumes:
+      - rental_data:/var/lib/postgresql/data
+    networks: [rental-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+
+  eureka-server:
+    <<: *app
+    build: ./eureka-server
+    environment:
+      EUREKA_URL: http://eureka-server:8761/eureka/
+    ports: ["127.0.0.1:8761:8761"]
+    networks: [services]
+    healthcheck:
+      <<: *health
+      test: ["CMD", "curl", "-fsS", "http://localhost:8761/actuator/health"]
+
+  auth-service:
+    <<: *app
+    build: ./auth-service
+    depends_on:
+      auth-db: {condition: service_healthy}
+      eureka-server: {condition: service_healthy}
+    environment:
+      <<: *eureka-env
+      SERVICE_HOST: auth-service
+      APP_DB_URL: jdbc:postgresql://auth-db:5432/auth_db
+      APP_DB_USER: auth_app
+      APP_DB_PASSWORD: "${AUTH_DB_PASSWORD:?Chay scripts/00a_setup_local.cmd truoc}"
+      SPRING_CONFIG_IMPORT: file:/run/ptpmhdv/bootstrap-admin.properties
+      JWT_PRIVATE_KEY_LOCATION: file:/run/ptpmhdv/private-key.pem
+    volumes:
+      - ./.local/bootstrap-admin.properties:/run/ptpmhdv/bootstrap-admin.properties:ro
+      - ./.local/keys/private-key.pem:/run/ptpmhdv/private-key.pem:ro
+      - ./.local/keys/public-key.pem:/run/ptpmhdv/public-key.pem:ro
+    ports: ["127.0.0.1:8082:8082"]
+    networks: [services, auth-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD", "curl", "-fsS", "http://localhost:8082/actuator/health/readiness"]
+
+  carmanage-service:
+    <<: *app
+    build: ./carmanage-service
+    depends_on:
+      car-db: {condition: service_healthy}
+      eureka-server: {condition: service_healthy}
+    environment:
+      <<: *car-env
+      SERVICE_HOST: carmanage-service
+      INSTANCE_ID: carmanage-8080
+    volumes:
+      - car_media:/app/media
+      - ./.local/keys/public-key.pem:/run/ptpmhdv/public-key.pem:ro
+    ports: ["127.0.0.1:8080:8080"]
+    networks: [services, car-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+
+  carmanage-replica:
+    <<: *app
+    profiles: [balance]
+    build: ./carmanage-service
+    depends_on:
+      carmanage-service: {condition: service_healthy}
+    environment:
+      <<: *car-env
+      SERVICE_HOST: carmanage-replica
+      INSTANCE_ID: carmanage-8090
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+    volumes:
+      - car_media:/app/media
+      - ./.local/keys/public-key.pem:/run/ptpmhdv/public-key.pem:ro
+    ports: ["127.0.0.1:8090:8080"]
+    networks: [services, car-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/actuator/health/readiness"]
+
+  rental-service:
+    <<: *app
+    build: ./rental-service
+    depends_on:
+      rental-db: {condition: service_healthy}
+      eureka-server: {condition: service_healthy}
+      carmanage-service: {condition: service_healthy}
+    environment:
+      <<: *eureka-env
+      SERVICE_HOST: rental-service
+      APP_DB_URL: jdbc:postgresql://rental-db:5432/rental_db
+      APP_DB_USER: rental_app
+      APP_DB_PASSWORD: "${RENTAL_DB_PASSWORD:?Chay scripts/00a_setup_local.cmd truoc}"
+      BOOKING_DEPOSIT_PERCENT: "${BOOKING_DEPOSIT_PERCENT:-40}"
+      BOOKING_HOLD_MINUTES: "${BOOKING_HOLD_MINUTES:-1440}"
+    volumes:
+      - ./.local/keys/public-key.pem:/run/ptpmhdv/public-key.pem:ro
+    ports: ["127.0.0.1:8081:8081"]
+    networks: [services, rental-data]
+    healthcheck:
+      <<: *health
+      test: ["CMD", "curl", "-fsS", "http://localhost:8081/actuator/health/readiness"]
+
+networks:
+  services:
+  auth-data:
+    internal: true
+  car-data:
+    internal: true
+  rental-data:
+    internal: true
+
+volumes:
+  auth_data:
+  car_data:
+  rental_data:
+  car_media:

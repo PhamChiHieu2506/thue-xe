@@ -1,0 +1,30 @@
+ĐĂNG XE NGAY, KHÔNG QUA QUẢN TRỊ DUYỆT
+
+1. Đăng nhập vai trò Chủ xe -> Xe của tôi -> Đăng xe mới.
+2. Chọn dòng xe (VinFast, Toyota...) để dùng ảnh và điền nhanh thông số,
+   hoặc tự nhập xe khác và tải ảnh của xe đó.
+3. Điền biển số, năm sản xuất, số chỗ, giá thuê, tỉnh/thành, khu vực,
+   địa chỉ nhận xe và mô tả. Chọn trạng thái Sẵn sàng cho thuê.
+4. Bấm Thêm và đăng xe. Xe xuất hiện ngay cho customer theo bộ lọc và lịch trống.
+5. Sửa xe -> Lưu thay đổi: vẫn được đăng ngay. Không có nút gửi quản trị duyệt.
+6. Customer mở Tìm xe, chọn địa điểm/lịch phù hợp rồi tìm lại để thấy xe vừa thêm.
+
+XE CŨ
+Xe đã gửi chờ duyệt và đủ thông tin được tự đăng lúc khởi động dịch vụ.
+Xe chưa gửi, chưa đủ thông tin: Chỉnh sửa -> bổ sung -> Lưu thay đổi.
+Xe lưu trữ hoặc dữ liệu mẫu không tự đăng lại. ID/giá/chủ sở hữu được giữ nguyên.
+Chủ xe vẫn xác nhận yêu cầu thuê để kiểm tra lịch; bước này thuộc chuyến xe.
+
+CẬP NHẬT TỪ BẢN TRƯỚC
+- Giữ thư mục .local, file .env và các volume Docker.
+- Mở Docker Desktop đến khi Engine running.
+- Mở PowerShell ở thư mục dự án cũ có docker-compose.yml, chạy:
+  docker compose --profile balance down
+- Chép đè mã nguồn mới vào thư mục cũ; không xóa cấu hình riêng và dữ liệu.
+- Chạy:
+  docker compose up -d --build
+  docker compose ps
+- Đợi các dịch vụ healthy, mở http://localhost:8080/dashboard.html và Ctrl+F5.
+- Nếu trước đó dùng replica Car, bật lại bằng:
+  docker compose --profile balance up -d
+- Không dùng down -v khi cập nhật vì sẽ xóa dữ liệu trong volume.

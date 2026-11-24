@@ -1,0 +1,28 @@
+CAP NHAT GIA THUE / DIA DIEM HIEN THI
+
+1. Mo Docker Desktop va doi Engine running.
+2. Trong thu muc du an cu, chay:
+   docker compose --profile balance down
+   Khong them -v; giu nguyen .env, .local va cac volume du lieu.
+3. Chep source moi vao thu muc du an. Can cap nhat ca thu muc carmanage-service
+   (Java, JS, CSS va tai nguyen TSV), khong chi chep rieng giao dien.
+4. Chay: docker compose up -d --build
+5. Mo http://localhost:8080 va nhan Ctrl+F5.
+
+MOI THE DONG XE CO:
+- Hinh anh, ten va so cho.
+- Dia diem hien thi (duoc phan bo san, khong doi moi lan tai trang).
+- Gia VND/ngay. Vi du VinFast VF 6: 850.000 VND/ngay, Da Nang.
+
+DE TU SUA GIA / DIA DIEM:
+- Mo carmanage-service\src\main\resources\car-catalog.tsv bang trinh soan thao.
+- Hai cot cuoi la displayPricePerDay va displayCity.
+- Cot gia chi ghi so, vi du 850000; khong ghi dau cham ngan cach hang nghin.
+- Cot dia diem ghi ten tinh/thanh hien hanh, vi du Da Nang co dau tieng Viet.
+- Giu nguyen dau TAB ngan cot, tong 9 cot/dong va khoa ID o cot dau.
+- Luu UTF-8, build lai bang docker compose up -d --build.
+
+Gia/dia diem danh muc la cau hinh hien thi cua du an, khong tu sinh xe cho thue.
+Khi co xe owner da dang phu hop, the uu tien gia/dia diem cua xe co lich trong.
+Gia/diem cua xe owner da nhap va du lieu don thue duoc giu nguyen; bao gia dat xe
+van do server Rental tinh tu du lieu xe da dang.

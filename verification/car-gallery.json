@@ -1,0 +1,122 @@
+{
+  "date": "2026-11-23",
+  "feature": "Ready-to-use customer inventory and bundled car photos",
+  "stockModels": 20,
+  "brands": 5,
+  "bundledPhotoFiles": 21,
+  "behavior": [
+    "Adds a persistent, clearly labeled system sample fleet at startup without an owner import",
+    "Customer cards display large local images, varied brands, prices and working quote buttons",
+    "Legacy Toyota Vios / VF models / G63 names resolve images; unknown models have a bundled fallback",
+    "Existing inventory, user ownership and masked profiles are retained"
+  ],
+  "javaTests": [
+    {
+      "module": "auth-service",
+      "name": "com.example.auth_service.ProfilePrivacyTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "auth-service",
+      "name": "com.example.auth_service.AuthLoginTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.SystemDemoFleetTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarCatalogTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarAuthorizationTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "carmanage-service",
+      "name": "com.example.carmanage_service.CarmanageServiceApplicationTests",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "module": "rental-service",
+      "name": "com.example.rental_service.RentalIntegrationTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "totalJavaTests": 39,
+  "build": "All four Maven modules verified; final CarManage changes reverified and packaged",
+  "syntax": "All modified JavaScript, JSON, YAML and Maven XML valid",
+  "postgresAndUi": {
+    "status": "passed",
+    "postgres": "PostgreSQL 17.7 on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0, 64-bit",
+    "sampleRows": 20,
+    "totalRowsAfterOwnerAdditions": 22,
+    "replicas": 2,
+    "rowIdentitiesAndRatesPreservedOnDatabaseAndApplicationRestart": true,
+    "firstStart": {
+      "status": "passed",
+      "phase": "first-start",
+      "database": "PostgreSQL 17.7",
+      "method": "jsdom DOM interactions with real Auth, Rental and two CarManage processes; Simple Discovery; no visual browser layout claim",
+      "checks": [
+        "Customer opens a ready-to-use 20-model / 5-brand inventory with full photo elements, without owner import",
+        "First five cards show different brands",
+        "Every displayed photo returns HTTP 200 with image content and nonempty bytes",
+        "Brand/search filters work and a missing photo switches to the bundled fallback",
+        "Choosing a photo card calculates the correct three-day quote through real Rental -> CarManage HTTP calls",
+        "Masked customer profile remains functional",
+        "Legacy Toyota Vios and G63 records resolve real bundled model photos; owners still manage only their cars",
+        "Admin can edit a seeded rate before restart without changing its identity",
+        "Rental load balancing reaches both CarManage replicas sharing the PostgreSQL inventory"
+      ],
+      "photoCount": 20,
+      "errors": []
+    },
+    "afterRestart": {
+      "status": "passed",
+      "phase": "after-restart",
+      "database": "PostgreSQL 17.7",
+      "method": "jsdom DOM interactions with real Auth, Rental and two CarManage processes; Simple Discovery; no visual browser layout claim",
+      "checks": [
+        "Customer opens a ready-to-use 20-model / 5-brand inventory with full photo elements, without owner import",
+        "First five cards show different brands",
+        "Every displayed photo returns HTTP 200 with image content and nonempty bytes",
+        "PostgreSQL + both CarManage restarts preserve 20 samples, the edited sample rate and both owner cars",
+        "Choosing a photo card calculates the correct three-day quote through real Rental -> CarManage HTTP calls",
+        "Customer profile persists after a PostgreSQL restart"
+      ],
+      "photoCount": 21,
+      "errors": []
+    }
+  },
+  "limits": [
+    "DOM flows use jsdom, not a visual browser-layout test.",
+    "PostgreSQL 17.7 and four application processes were exercised directly with Simple Discovery; Docker/Eureka deployment was not executed for this change.",
+    "Images illustrate model families; sample plates, daily rates and availability do not represent verified rental inventory."
+  ]
+}

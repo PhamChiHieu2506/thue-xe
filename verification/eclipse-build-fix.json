@@ -1,0 +1,14 @@
+{
+  "date": "2026-11-18",
+  "change": "Pin maven-jar-plugin to 3.4.2 for older Eclipse m2e compatibility",
+  "command": "mvn -DskipTests clean package",
+  "result": "BUILD SUCCESS",
+  "modules": [
+    "auth-service",
+    "carmanage-service",
+    "rental-service",
+    "eureka-server"
+  ],
+  "tests_rerun": false,
+  "eclipse_ui_verified": false
+}

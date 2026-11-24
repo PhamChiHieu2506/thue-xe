@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "method": "jsdom DOM with live Auth/Car/Rental HTTP services; no visual layout claim",
+  "checks": [
+    "Public storefront displays approved vehicles and uploaded photo elements",
+    "Customer searches by dates/city, sees live quote and creates a persisted request from the UI",
+    "Owner can review and approve a customer request from the UI",
+    "Submitting a bank reference leaves money unverified and the booking waiting for the owner",
+    "Owner confirmation of actual receipt updates the booking to confirmed",
+    "Personal profile renders only masked contact information",
+    "Admin pages use actual accounts and review queue, without fictional dashboards"
+  ]
+}

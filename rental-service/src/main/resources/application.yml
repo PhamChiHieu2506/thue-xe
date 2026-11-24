@@ -1,0 +1,74 @@
+server:
+  port: ${SERVER_PORT:8081}
+  shutdown: graceful
+
+spring:
+  application:
+    name: rental-service
+  datasource:
+    url: ${APP_DB_URL:jdbc:postgresql://localhost:5432/rental_db}
+    username: ${APP_DB_USER:rental_app}
+    password: ${APP_DB_PASSWORD:}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+  cloud:
+    loadbalancer:
+      cache:
+        enabled: false # Eureka client already caches the registry.
+      retry:
+        enabled: false
+    openfeign:
+      client:
+        config:
+          carmanage-service:
+            connectTimeout: 2000
+            readTimeout: 4000
+            loggerLevel: basic
+  lifecycle:
+    timeout-per-shutdown-phase: 10s
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+    fetch-registry: true
+    registry-fetch-interval-seconds: 5
+    healthcheck:
+      enabled: true
+  instance:
+    hostname: ${SERVICE_HOST:localhost}
+    prefer-ip-address: false
+    instance-id: ${INSTANCE_ID:${spring.application.name}-${server.port}}
+    health-check-url-path: /actuator/health
+    status-page-url-path: /actuator/info
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db
+
+app:
+  booking:
+    deposit-percent: ${BOOKING_DEPOSIT_PERCENT:40}
+    payment-hold-minutes: ${BOOKING_HOLD_MINUTES:1440}
+  jwt:
+    issuer: ${JWT_ISSUER:https://ptpmhdv.local/auth}
+    public-key-location: ${JWT_PUBLIC_KEY_LOCATION:file:../.local/keys/public-key.pem}
+
+
+logging:
+  level:
+    com.example.rental_service.client.CarClient: ${CAR_CLIENT_LOG_LEVEL:INFO}

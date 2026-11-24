@@ -1,0 +1,409 @@
+{
+  "info": {
+    "name": "VeloDrive — SOA rental operations",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Nhập username/password do bạn tự đăng ký; chuyển tài khoản bằng request đăng nhập khi đổi vai trò. Điền carId/bookingId/lịch ISO8601 và số tiền theo phản hồi API. Chỉ xác nhận khoản tiền đã thực nhận. Tham khảo API OpenAPI cho đăng xe/upload ảnh và toàn bộ hợp đồng. Owner có thể thêm xe và công bố ngay, không cần admin duyệt. Nhập biển số xe thật vào biến licensePlate trước request thêm xe; giữ nguyên quy trình chủ xe xác nhận yêu cầu thuê."
+  },
+  "variable": [
+    {
+      "key": "authUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "carUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "rentalUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "username",
+      "value": ""
+    },
+    {
+      "key": "password",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "carId",
+      "value": ""
+    },
+    {
+      "key": "bookingId",
+      "value": ""
+    },
+    {
+      "key": "paymentId",
+      "value": ""
+    },
+    {
+      "key": "startsAt",
+      "value": ""
+    },
+    {
+      "key": "endsAt",
+      "value": ""
+    },
+    {
+      "key": "expectedTotal",
+      "value": ""
+    },
+    {
+      "key": "idempotencyKey",
+      "value": ""
+    },
+    {
+      "key": "paymentReference",
+      "value": ""
+    },
+    {
+      "key": "amount",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Đăng nhập bằng tài khoản của bạn",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{authUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if(pm.response.code===200) pm.collectionVariables.set(\"token\",pm.response.json().accessToken); else pm.collectionVariables.unset(\"token\");"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hồ sơ được che",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{authUrl}}/api/auth/me"
+      }
+    },
+    {
+      "name": "Xe đã đăng",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{carUrl}}/api/cars"
+      }
+    },
+    {
+      "name": "Xe của owner đang đăng nhập",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{carUrl}}/api/cars?mine=true"
+      }
+    },
+    {
+      "name": "Owner thêm và đăng xe ngay",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{carUrl}}/api/cars",
+        "description": "Đăng nhập bằng OWNER, đặt biến licensePlate là biển số thực tế, sửa thông tin xe rồi Send. Xe được đăng ngay khi dữ liệu hợp lệ. Dòng xe có ảnh trong catalog không bắt buộc upload; xe ngoài danh mục cần photoIds từ API car-media.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"licensePlate\": \"{{licensePlate}}\",\n  \"name\": \"Toyota Vios\",\n  \"brand\": \"Toyota\",\n  \"modelYear\": 2023,\n  \"seatCount\": 5,\n  \"pricePerDay\": 800000,\n  \"status\": \"AVAILABLE\",\n  \"city\": \"Hà Nội\",\n  \"district\": \"Cầu Giấy\",\n  \"pickupAddress\": \"Địa chỉ nhận xe của bạn\",\n  \"description\": \"Thông tin xe, tiện ích và điều kiện thuê của bạn\",\n  \"transmission\": \"AUTOMATIC\",\n  \"fuelType\": \"PETROL\",\n  \"photoIds\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Thêm và đăng ngay\", () => { pm.response.to.have.status(201); pm.expect(pm.response.json().listingStatus).to.eql(\"PUBLISHED\"); });",
+              "if (pm.response.code === 201) pm.environment.set(\"carId\", pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Báo giá ngày giờ",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/quotes?carId={{carId}}&startsAt={{startsAt}}&endsAt={{endsAt}}"
+      }
+    },
+    {
+      "name": "Tạo yêu cầu thuê",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "{{idempotencyKey}}"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"carId\": \"{{carId}}\",\n  \"startsAt\": \"{{startsAt}}\",\n  \"endsAt\": \"{{endsAt}}\",\n  \"expectedTotal\": \"{{expectedTotal}}\",\n  \"message\": \"\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if(!pm.collectionVariables.get(\"idempotencyKey\")) pm.collectionVariables.set(\"idempotencyKey\",pm.variables.replaceIn(\"{{$guid}}\"));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if(pm.response.code===201) pm.collectionVariables.set(\"bookingId\",pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Đơn của người đăng nhập",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings"
+      }
+    },
+    {
+      "name": "Chi tiết chuyến",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}"
+      }
+    },
+    {
+      "name": "Owner duyệt yêu cầu",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}/actions/approve",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"note\": \"Nhập địa chỉ và hướng dẫn bàn giao thực tế\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Thông tin nhận thanh toán",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}/payment-instructions"
+      }
+    },
+    {
+      "name": "Customer khai báo khoản đã chuyển",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}/payment-claims",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": \"{{amount}}\",\n  \"reference\": \"{{paymentReference}}\",\n  \"note\": \"\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Owner xác nhận đã thực nhận tiền",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}/payments/{{paymentId}}/verify",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accepted\": true,\n  \"note\": \"Đã kiểm tra tiền thực nhận\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Owner bàn giao xe",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}/actions/start",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Owner xác nhận trả xe",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{rentalUrl}}/api/bookings/{{bookingId}}/actions/complete",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
